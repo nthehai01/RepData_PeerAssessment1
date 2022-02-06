@@ -221,3 +221,33 @@ boxplot(new.median.steps, main = "New median total number of steps taken per day
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
+#### 1. Create a new factor indicating whether a given date is a weekday:
+
+*Create a function indicating a given date is a weekdays:*
+```{r}
+check.weekday <- function(x) !(weekdays(x, abbreviate = TRUE) %in% c("Sat", "Sun"))
+```
+
+*Create ```weekday``` feature:*
+```{r}
+new.df$weekday <- sapply(new.df$date, check.weekday)
+```
+
+*Summary on the new ```weekday``` column:*
+```{r}
+summary(new.df$weekday)
+```
+
+#### 2. Make the panel plot:
+
+```{r}
+p <- ggplot(new.df, aes(x = interval, y = steps, fill = weekday))
+p <- p + geom_line() +
+    facet_grid(weekday ~ .,
+               labeller = labeller(weekday = c("TRUE" = "Weekday", "FALSE" = "Weekend"))) + 
+    xlab("Interval") +
+    ylab("Number of steps") +
+    ggtitle("Time series plot")
+p
+```
+
