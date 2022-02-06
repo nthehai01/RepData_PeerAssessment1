@@ -80,7 +80,32 @@ It means, for each date, there are more than 50% of the time that the enthusiast
 
 
 ## What is the average daily activity pattern?
+*Calculate average number of steps taken per day:*
+```{r}
+library(dplyr)
+avarage.steps <- df %>%
+    group_by(date) %>%
+    summarise(mean(steps)) %>%
+    rename("steps" = "mean(steps)")
+```
 
+
+*Time series plot:*
+```{r}
+ggplot(data = avarage.steps, aes(x = steps, y = date)) +
+    geom_line() +
+    xlab("avarage steps") +
+    ggtitle("Time series plot") +
+    annotate("segment", 
+             x = avarage.steps[which(avarage.steps$steps == max(avarage.steps$steps, na.rm = TRUE)), "steps"][[1]] + 1,
+             xend = avarage.steps[which(avarage.steps$steps == max(avarage.steps$steps, na.rm = TRUE)), "steps"][[1]] + 1,
+             y = avarage.steps[which(avarage.steps$steps == max(avarage.steps$steps, na.rm = TRUE)), "date"][[1]],
+             yend = avarage.steps[which(avarage.steps$steps == max(avarage.steps$steps, na.rm = TRUE)), "date"][[1]],
+             arrow = arrow(), 
+             color = "blue")
+```
+
+*From the plot, the day Dec 23 has the highest average number of steps within 5 minutes.*
 
 
 ## Imputing missing values
