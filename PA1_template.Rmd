@@ -5,13 +5,78 @@ output:
     keep_md: true
 ---
 
+```{r setoptions, echo=FALSE}
+library(knitr)
+opts_chunk$set(echo = TRUE)
+```
+
 
 ## Loading and preprocessing the data
+1. Set up directory for downloading data
+```{r}
+dir.create("./data", showWarnings = FALSE)
 
+downloadURL <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+downloadedFile <- "./data/activity.zip"
+```
+
+2. Download and unzip data
+```{r}
+if(!file.exists(downloadedFile)) {
+    download.file(downloadURL, downloadedFile, method = "curl")
+    unzip(downloadedFile, exdir = "./data")
+}
+```
+
+3. Load data to environment
+```{r}
+df <- read.csv(file = "./data/activity.csv", header = TRUE)
+```
+
+4. Convert date feature to DateTime format
+```{r}
+df$date <- as.Date(df$date, "%Y-%m-%d")
+```
+
+5. Take a quick look of our data
+```{r}
+head(df)
+```
 
 
 ## What is mean total number of steps taken per day?
+1. Calculate the total number of steps taken per day
+```{r}
+total.steps <- tapply(df$step, df$date, sum)
+```
 
+2. Histogram of the total number of steps taken per day
+```{r}
+library(ggplot2)
+qplot(total.steps,
+      geom = "histogram",
+      bins = 10,
+      main = "Total steps taken per day",
+      xlab = "Steps")
+```
+
+3. The mean and median of the total number of steps taken per day
+
+*Mean:*
+```{r}
+mean.steps <- tapply(df$steps, df$date, mean)
+summary(mean.steps)
+```
+The minimum value for the mean of the total number steps is very low with 0.14. Otherwise, the maximum value is 73.59 which is very high value for this figure.
+
+*Median:*
+```{r}
+median.steps <- tapply(df$steps, df$date, median)
+summary(median.steps)
+```
+
+The median values for all of the dates are the same with 0. 
+It means, for each date, there are more than 50% of the time that the enthusiasts did not take any steps.
 
 
 ## What is the average daily activity pattern?
